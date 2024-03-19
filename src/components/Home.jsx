@@ -8,6 +8,7 @@ export function Home() {
   const [stdInput, setStdInput] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [executing, setExecuting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState("");
   const [output, setOutput] = useState("");
@@ -20,6 +21,30 @@ export function Home() {
     if (success) setSuccess("");
   });
 
+  async function executeCodeFunction(e) {
+    e.preventDefault();
+    if ([code, stdInput].some((v) => !v)) {
+      setError("Code and Input are required.");
+      return;
+    }
+    try {
+      setError("");
+      setExecuting(true);
+      setOutput("");
+      setOutputMessage("Executing");
+
+      // exceute code and get the output
+      const submissionData = await executeCode(code, stdInput, language);
+
+      setOutputMessage(submissionData.message);
+      setOutput(submissionData.stdout);
+    } catch (error) {
+      setError("Something went wrong. Please try again");
+    } finally {
+      setExecuting(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if ([username, language, code].some((v) => !v)) {
@@ -30,22 +55,13 @@ export function Home() {
       setError("");
       setSuccess("");
       setLoading(true);
-      setOutput("");
-      setOutputMessage("Executing");
 
-      // exceute code and get the output
-      const submissionData = await executeCode(code, stdInput, language);
-
-      setOutputMessage(submissionData.message);
-      setOutput(submissionData.stdout);
-
-      // save the data to database
       const data = await submitEntry(
         username,
         language,
         code,
         stdInput,
-        submissionData.stdout,
+        output,
       );
       if (!data.ok) {
         setError(data.message);
@@ -60,7 +76,7 @@ export function Home() {
   }
 
   return (
-    <div className="mx-2 mt-6 flex min-h-[80%] max-w-5xl flex-col rounded-md border border-gray-200 bg-gray-100 p-4 sm:mx-auto">
+    <div className="mx-2 mt-6 flex min-h-[80%] max-w-5xl flex-col rounded-md border border-gray-600 bg-[#171a18] p-4 text-gray-200 sm:mx-auto">
       <h1 className="text-3xl">Enter details</h1>
       <form className="mt-8 flex w-full flex-grow flex-col justify-between">
         <div className="flex-grow gap-10 space-y-4 md:flex">
@@ -81,7 +97,7 @@ export function Home() {
               </label>
               <input
                 id="username"
-                className="text-md w-full rounded-md border border-gray-500  px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
+                className="text-md w-full rounded-md border border-gray-500 bg-[#272a28]  px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -93,7 +109,7 @@ export function Home() {
               </label>
               <select
                 id="language"
-                className="rounded-md border border-gray-500 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                className="rounded-md border border-gray-500 bg-[#272a28] outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
@@ -111,7 +127,7 @@ export function Home() {
               </label>
               <textarea
                 id="stdin"
-                className="text-md h-36 rounded-md border border-gray-500 px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
+                className="text-md h-36 rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
                 placeholder="Input"
                 value={stdInput}
                 onChange={(e) => setStdInput(e.target.value)}
@@ -125,7 +141,7 @@ export function Home() {
               </label>
               <textarea
                 id="code"
-                className="text-md h-96 flex-grow rounded-md border border-gray-500 px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                className="text-md h-96 flex-grow rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
                 placeholder="Input"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
@@ -134,7 +150,7 @@ export function Home() {
             <div className="mt-2 rounded-md border border-gray-500 p-2">
               <label
                 htmlFor="code"
-                className="text-md font-semibold leading-[0.7rem] text-gray-600"
+                className="text-md font-semibold leading-[0.7rem] text-gray-200"
               >
                 Output
               </label>
@@ -151,15 +167,24 @@ export function Home() {
             </div>
           </div>
         </div>
-        <div className="">
+        <div className="space-x-2 space-y-2">
           <button
             onClick={handleSubmit}
             className={`${
               loading ? "cursor-not-allowed " : ""
-            }sm:my-0 my-4 rounded-md bg-green-500 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-900`}
-            disabled={loading}
+            }sm:my-0 my-4 rounded-md bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
+            disabled={loading || executing}
           >
             {loading ? "Submitting..." : "Submit"}
+          </button>
+          <button
+            onClick={executeCodeFunction}
+            className={`${
+              loading ? "cursor-not-allowed " : ""
+            }sm:my-0 my-4 rounded-md bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
+            disabled={executing || loading}
+          >
+            {executing ? "Executing..." : "Run"}
           </button>
         </div>
       </form>

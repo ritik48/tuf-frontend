@@ -3,7 +3,7 @@ const BACKEND = import.meta.env.VITE_BACKEND;
 
 export function useEntry() {
   const [entries, setEntries] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {

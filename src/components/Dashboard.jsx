@@ -15,7 +15,7 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="font-seminold my-4 text-center text-xl">
+      <div className="text-gray-200 font-seminold my-4 text-center text-xl">
         Fetching entries...{error}
       </div>
     );
