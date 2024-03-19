@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-const BACKEND = "http://127.0.0.1:3000";
+const BACKEND = import.meta.env.VITE_BACKEND;
 
 export function useEntry() {
   const [entries, setEntries] = useState(null);

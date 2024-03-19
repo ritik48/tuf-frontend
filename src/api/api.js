@@ -1,4 +1,4 @@
-const BACKEND = "http://127.0.0.1:3000";
+const BACKEND = import.meta.env.VITE_BACKEND;
 
 export async function executeCode(code, stdInput, language) {
   const codeResponse = await fetch(`${BACKEND}/submissions`, {
