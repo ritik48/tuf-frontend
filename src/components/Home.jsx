@@ -4,12 +4,16 @@ const BACKEND = "http://127.0.0.1:3000";
 
 export function Home() {
   const [username, setUsername] = useState("");
-  const [language, setLanguage] = useState("C++");
+  const [language, setLanguage] = useState("Cpp");
   const [stdInput, setStdInput] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState("");
+  const [output, setOutput] = useState("");
+  const [outputMessage, setOutputMessage] = useState("");
+
+  const formattedOutput = output?.split("\n");
 
   useEffect(() => {
     const handleKeyDown = () => {
@@ -26,7 +30,7 @@ export function Home() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if ([username, language, stdInput, code].some((v) => !v)) {
+    if ([username, language, code].some((v) => !v)) {
       setError("Every field is required.");
       return;
     }
@@ -34,6 +38,26 @@ export function Home() {
       setError("");
       setSuccess("");
       setLoading(true);
+      setOutput("");
+      setOutputMessage("Executing");
+
+      const codeResponse = await fetch(`${BACKEND}/submissions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          stdin: stdInput,
+          language,
+        }),
+      });
+      const submissionData = await codeResponse.json();
+      console.log(submissionData);
+
+      setOutputMessage(submissionData.message);
+      setOutput(submissionData.stdout);
+
       const res = await fetch(`${BACKEND}/new`, {
         headers: {
           "Content-Type": "application/json",
@@ -44,6 +68,7 @@ export function Home() {
           language,
           source_code: code,
           input: stdInput,
+          output: submissionData.stdout,
         }),
       });
       const data = await res.json();
@@ -97,7 +122,7 @@ export function Home() {
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
-                <option value={"C++"}>C++</option>
+                <option value={"Cpp"}>C++</option>
                 <option value={"Java"}>Java</option>
                 <option value={"Javascript"}>Javascript</option>
                 <option value={"Python"}>Python</option>
@@ -118,17 +143,39 @@ export function Home() {
               />
             </div>
           </div>
-          <div className="flex w-full flex-col">
-            <label htmlFor="code" className="text-lg">
-              Code
-            </label>
-            <textarea
-              id="code"
-              className="text-md h-96 flex-grow rounded-md border border-gray-500 px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
-              placeholder="Input"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
+          <div className="w-full">
+            <div className="flex w-full flex-col">
+              <label htmlFor="code" className="text-lg">
+                Code
+              </label>
+              <textarea
+                id="code"
+                className="text-md h-96 flex-grow rounded-md border border-gray-500 px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                placeholder="Input"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+            </div>
+            <div className="mt-2 rounded-md border border-gray-500 p-2">
+              <label
+                htmlFor="code"
+                className="text-md font-semibold leading-[0.7rem] text-gray-600"
+              >
+                Output
+              </label>
+              <div
+                className={`font-semibold leading-[0.8rem] text-green-500 ${outputMessage !== "Accepted" ? "text-red-500" : ""}`}
+              >
+                {outputMessage}
+              </div>
+
+              {output &&
+                formattedOutput.map((outp, i) => (
+                  <div key={outp + i}>
+                    {outp}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
         <div className="">

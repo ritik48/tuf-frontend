@@ -19,10 +19,13 @@ export function Entry({
     code,
     timestamp,
     onSelected,
+    output
 }) {
     const [date, time] = formatDateAndTime(timestamp);
 
     const formattedStdin = stdin.split("\n");
+    const formattedOutput = output.split("\n");
+
     return (
         <tr className="bg-white border-b hover:bg-gray-50">
             <th
@@ -39,6 +42,14 @@ export function Entry({
                     <div key={inp + i}>
                         {inp.slice(0, 20)}
                         {inp.length > 20 ? "..." : ""}
+                    </div>
+                ))}
+            </td>
+            <td className="border px-6 py-4 w-fit text-gray-700 font-semibold">
+                {formattedOutput.map((outp, i) => (
+                    <div key={outp + i}>
+                        {outp.slice(0, 20)}
+                        {outp.length > 20 ? "..." : ""}
                     </div>
                 ))}
             </td>
