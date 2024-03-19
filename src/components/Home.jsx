@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-
-const BACKEND = "http://127.0.0.1:3000";
+import { useState } from "react";
+import { executeCode, submitEntry } from "../api/api";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 export function Home() {
   const [username, setUsername] = useState("");
@@ -15,18 +15,10 @@ export function Home() {
 
   const formattedOutput = output?.split("\n");
 
-  useEffect(() => {
-    const handleKeyDown = () => {
-      if (error) setError("");
-      if (success) setSuccess("");
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [error, success]);
+  useKeyPress("keydown", () => {
+    if (error) setError("");
+    if (success) setSuccess("");
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,38 +33,21 @@ export function Home() {
       setOutput("");
       setOutputMessage("Executing");
 
-      const codeResponse = await fetch(`${BACKEND}/submissions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code,
-          stdin: stdInput,
-          language,
-        }),
-      });
-      const submissionData = await codeResponse.json();
-      console.log(submissionData);
+      // exceute code and get the output
+      const submissionData = await executeCode(code, stdInput, language);
 
       setOutputMessage(submissionData.message);
       setOutput(submissionData.stdout);
 
-      const res = await fetch(`${BACKEND}/new`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          username,
-          language,
-          source_code: code,
-          input: stdInput,
-          output: submissionData.stdout,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      // save the data to database
+      const data = await submitEntry(
+        username,
+        language,
+        code,
+        stdInput,
+        submissionData.stdout,
+      );
+      if (!data.ok) {
         setError(data.message);
       } else {
         setSuccess(data.message);
@@ -171,9 +146,7 @@ export function Home() {
 
               {output &&
                 formattedOutput.map((outp, i) => (
-                  <div key={outp + i}>
-                    {outp}
-                  </div>
+                  <div key={outp + i}>{outp}</div>
                 ))}
             </div>
           </div>
