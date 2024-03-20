@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { executeCode, submitEntry } from "../api/api";
 import { useKeyPress } from "../hooks/useKeyPress";
+import { FaPlay } from "react-icons/fa";
 
 export function Home() {
   const [username, setUsername] = useState("");
@@ -76,28 +77,18 @@ export function Home() {
   }
 
   return (
-    <div className="mx-2 mt-6 flex min-h-[80%] max-w-5xl flex-col rounded-md border border-gray-600 bg-[#171a18] p-4 text-gray-200 sm:mx-auto">
-      <h1 className="text-3xl">Enter details</h1>
-      <form className="mt-8 flex w-full flex-grow flex-col justify-between">
-        <div className="flex-grow gap-10 space-y-4 md:flex">
-          <div className="space-y-4">
+    <div className="mx-2 my-2 flex flex-col rounded-md border border-gray-600 bg-[#171a18] p-4 text-gray-200 sm:mx-auto sm:w-4/5">
+      <h1 className="text-2xl">Enter details</h1>
+      <form className="mt-8 flex flex-grow flex-col justify-between">
+        <div className="flex-grow space-y-2 gap-10 md:flex">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-col">
-              {error && (
-                <div className="text-md my-1 w-fit rounded-md bg-red-100 px-3 py-1 text-red-600">
-                  {error}
-                </div>
-              )}
-              {success && (
-                <div className="text-md my-1 w-fit rounded-md bg-green-200 px-3 py-1 text-green-800">
-                  {success}
-                </div>
-              )}
               <label htmlFor="username" className="text-lg">
                 Username
               </label>
               <input
                 id="username"
-                className="text-md w-full rounded-md border border-gray-500 bg-[#272a28]  px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
+                className="text-md w-full rounded-md border border-gray-500 bg-[#272a28]  px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -109,7 +100,7 @@ export function Home() {
               </label>
               <select
                 id="language"
-                className="rounded-md border border-gray-500 bg-[#272a28] outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                className="rounded-md border border-gray-500 bg-[#272a28] outline-none focus:ring-2 focus:ring-[#3d7f9c]"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
@@ -127,7 +118,7 @@ export function Home() {
               </label>
               <textarea
                 id="stdin"
-                className="text-md h-36 rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 sm:w-96"
+                className="text-md h-36 rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
                 placeholder="Input"
                 value={stdInput}
                 onChange={(e) => setStdInput(e.target.value)}
@@ -141,7 +132,7 @@ export function Home() {
               </label>
               <textarea
                 id="code"
-                className="text-md h-96 flex-grow rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                className="text-md h-96 flex-grow rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
                 placeholder="Input"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
@@ -167,12 +158,22 @@ export function Home() {
             </div>
           </div>
         </div>
-        <div className="space-x-2 space-y-2">
+        {error && (
+          <div className="text-md my-2 w-fit rounded-md bg-red-100 px-3 py-1 text-red-600">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="text-md my-2 w-fit rounded-md bg-green-200 px-3 py-1 text-green-800">
+            {success}
+          </div>
+        )}
+        <div className="flex space-x-[1px]">
           <button
             onClick={handleSubmit}
             className={`${
               loading ? "cursor-not-allowed " : ""
-            }sm:my-0 my-4 rounded-md bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
+            }sm:my-0 my-4 rounded-l-sm bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
             disabled={loading || executing}
           >
             {loading ? "Submitting..." : "Submit"}
@@ -181,10 +182,13 @@ export function Home() {
             onClick={executeCodeFunction}
             className={`${
               loading ? "cursor-not-allowed " : ""
-            }sm:my-0 my-4 rounded-md bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
+            }sm:my-0 my-4 rounded-r-sm  bg-[#3f4240]  px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-[#626462]`}
             disabled={executing || loading}
           >
-            {executing ? "Executing..." : "Run"}
+            <div className="flex items-center gap-1">
+              <span>{executing ? "Executing..." : "Run"}</span>
+              <FaPlay size={14} />
+            </div>
           </button>
         </div>
       </form>

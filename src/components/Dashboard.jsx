@@ -15,7 +15,7 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="text-gray-200 font-seminold my-4 text-center text-xl">
+      <div className="font-seminold my-4 text-center text-xl text-gray-200">
         Fetching entries...{error}
       </div>
     );
@@ -35,9 +35,9 @@ export function Dashboard() {
         <table
           className={`${
             selected ? "blur-[2px]" : ""
-          } mx-auto w-full max-w-5xl border border-gray-900 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400`}
+          } relative mx-auto max-w-5xl border border-gray-900 text-left text-sm text-gray-500 rtl:text-right`}
         >
-          <thead className="bg-gray-200 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="sticky inset-x-0 top-0 bg-[#272a28] text-xs uppercase text-gray-200">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Username
@@ -59,7 +59,7 @@ export function Dashboard() {
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="">
             {entries &&
               entries.map(
                 ({
