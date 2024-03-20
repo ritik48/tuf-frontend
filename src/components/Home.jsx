@@ -39,6 +39,8 @@ export function Home() {
 
       setOutputMessage(submissionData.message);
       setOutput(submissionData.stdout);
+      
+      return submissionData.stdout;
     } catch (error) {
       setError("Something went wrong. Please try again");
     } finally {
@@ -48,10 +50,18 @@ export function Home() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if ([username, language, code].some((v) => !v)) {
+
+    if ([username, language, code, stdInput].some((v) => !v)) {
       setError("Every field is required.");
       return;
     }
+
+    // if user clicks on submit but didn't execute the code earlier, then execute it before submitting
+    let codeOutput = output;
+    if (!codeOutput) {
+      codeOutput = await executeCodeFunction(e);
+    }
+
     try {
       setError("");
       setSuccess("");
@@ -62,7 +72,7 @@ export function Home() {
         language,
         code,
         stdInput,
-        output,
+        codeOutput,
       );
       if (!data.ok) {
         setError(data.message);
@@ -80,7 +90,7 @@ export function Home() {
     <div className="mx-2 my-2 flex flex-col rounded-md border border-gray-600 bg-[#171a18] p-4 text-gray-200 sm:mx-auto sm:w-4/5">
       <h1 className="text-2xl">Enter details</h1>
       <form className="mt-8 flex flex-grow flex-col justify-between">
-        <div className="flex-grow space-y-2 gap-10 md:flex">
+        <div className="flex-grow gap-10 space-y-2 md:flex">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col">
               <label htmlFor="username" className="text-lg">
