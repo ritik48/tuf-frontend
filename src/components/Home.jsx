@@ -9,7 +9,7 @@ import { useRef } from "react";
 
 export function Home() {
   const [username, setUsername] = useState("");
-  const [language, setLanguage] = useState("cpp");
+  const [language, setLanguage] = useState("Cpp");
   const [stdInput, setStdInput] = useState("");
   // const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,6 +35,7 @@ export function Home() {
   async function executeCodeFunction(e) {
     e.preventDefault();
     const code = editorRef.current?.getValue();
+
     if ([code, stdInput].some((v) => !v)) {
       setError("Code and Input are required.");
       return;
