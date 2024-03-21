@@ -1,20 +1,29 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { executeCode, submitEntry } from "../api/api";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { FaPlay } from "react-icons/fa";
 import { MdError } from "react-icons/md";
+import Editor from "@monaco-editor/react";
+import { useRef } from "react";
 
 export function Home() {
   const [username, setUsername] = useState("");
-  const [language, setLanguage] = useState("Cpp");
+  const [language, setLanguage] = useState("cpp");
   const [stdInput, setStdInput] = useState("");
-  const [code, setCode] = useState("");
+  // const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [executing, setExecuting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState("");
   const [output, setOutput] = useState("");
   const [outputMessage, setOutputMessage] = useState("");
+
+  const editorRef = useRef(null);
+
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor;
+  }
 
   const formattedOutput = output?.split("\n");
 
@@ -25,6 +34,7 @@ export function Home() {
 
   async function executeCodeFunction(e) {
     e.preventDefault();
+    const code = editorRef.current?.getValue();
     if ([code, stdInput].some((v) => !v)) {
       setError("Code and Input are required.");
       return;
@@ -51,17 +61,14 @@ export function Home() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const code = editorRef.current?.getValue();
 
     if ([username, language, code, stdInput].some((v) => !v)) {
       setError("Every field is required.");
       return;
     }
 
-    // if user clicks on submit but didn't execute the code earlier, then execute it before submitting
-    let codeOutput = output;
-    if (!codeOutput) {
-      codeOutput = await executeCodeFunction(e);
-    }
+    let codeOutput = await executeCodeFunction(e);
 
     try {
       setError("");
@@ -177,17 +184,28 @@ export function Home() {
               </div>
             </div>
             <div className="flex w-full flex-col gap-2 rounded-md border border-[#393d3a] bg-[#171a18] p-4">
-              <div className="flex w-full flex-grow flex-col">
+              <div className="flex flex-grow flex-col">
                 <label htmlFor="code" className="text-lg">
                   Code
                 </label>
-                <textarea
+
+                <div className="text-md h-[400px] w-full flex-grow rounded-md sm:h-full">
+                  <Editor
+                    className=""
+                    defaultLanguage={language.toLowerCase()}
+                    language={language.toLowerCase()}
+                    theme="vs-dark"
+                    onMount={handleEditorDidMount}
+                  />
+                </div>
+
+                {/* <textarea
                   id="code"
-                  className="text-md h-96 flex-grow rounded-md border border-gray-700 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
+                  className="text-md flex-grow rounded-md border border-gray-700 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
                   placeholder="Input"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                />
+                /> */}
               </div>
               <div className="mt-auto rounded-md border border-gray-700 p-2">
                 <label
