@@ -27,7 +27,7 @@ export function Entry({
   const formattedOutput = output.split("\n");
 
   return (
-    <tr className="border-b bg-white hover:bg-gray-50 w-full">
+    <tr className="w-full border-b bg-white hover:bg-gray-50">
       <th
         scope="row"
         className="whitespace-nowrap px-6 py-4 font-medium text-gray-900"
@@ -63,7 +63,7 @@ export function Entry({
           Show code
         </button>
       </td>
-      <td className="border px-6 py-4 text-right text-gray-700 w-[20%]">
+      <td className="w-[20%] border px-6 py-4 text-right text-gray-700">
         <div>{date}</div>
         <div>{time}</div>
       </td>

@@ -36,14 +36,14 @@ export function Dashboard() {
         Submissions
       </h1>
 
-      <div className="relative h-[500px] overflow-x-auto px-2 sm:mx-auto sm:w-[90%] sm:rounded-lg">
+      <div className="relative m-2 flex h-[500px] flex-col items-start justify-start overflow-x-auto px-2 sm:mx-auto sm:w-[90%] sm:rounded-lg">
         <table
           className={`${
             selected ? "blur-[2px]" : ""
-          } relative block h-full overflow-x-scroll border-gray-900 text-left text-sm text-gray-500 rtl:text-right`}
+          } relative mx-auto w-full overflow-x-scroll border-gray-900 text-left text-sm text-gray-500 rtl:text-right`}
         >
           <thead className="sticky inset-x-0 top-0 bg-[#171a18] text-xs uppercase text-gray-200">
-            <tr>
+            <tr className="">
               <th scope="col" className="px-6 py-3">
                 Username
               </th>
