@@ -11,7 +11,6 @@ export function Home() {
   const [username, setUsername] = useState("");
   const [language, setLanguage] = useState("Cpp");
   const [stdInput, setStdInput] = useState("");
-  // const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [executing, setExecuting] = useState(false);
   const [error, setError] = useState(null);
@@ -190,7 +189,7 @@ export function Home() {
                   Code
                 </label>
 
-                <div className="text-md h-[400px] w-full flex-grow rounded-md sm:h-full">
+                <div className="text-md h-[400px] w-full flex-grow rounded-md">
                   <Editor
                     className=""
                     defaultLanguage={language.toLowerCase()}
@@ -199,14 +198,6 @@ export function Home() {
                     onMount={handleEditorDidMount}
                   />
                 </div>
-
-                {/* <textarea
-                  id="code"
-                  className="text-md flex-grow rounded-md border border-gray-700 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
-                  placeholder="Input"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                /> */}
               </div>
               <div className="mt-auto rounded-md border border-gray-700 p-2">
                 <label

@@ -11,7 +11,7 @@ export function Header() {
         <NavLink className="hover:underline" to={"/dashboard"}>
           Dashboard
         </NavLink>
-        <Link to={"https://github.com/ritik48"}>
+        <Link to={"https://github.com/ritik48/tuf-frontend"}>
           <FaGithub />
         </Link>
       </div>
