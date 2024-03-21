@@ -2,6 +2,7 @@ import { useState } from "react";
 import { executeCode, submitEntry } from "../api/api";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { FaPlay } from "react-icons/fa";
+import { MdError } from "react-icons/md";
 
 export function Home() {
   const [username, setUsername] = useState("");
@@ -39,7 +40,7 @@ export function Home() {
 
       setOutputMessage(submissionData.message);
       setOutput(submissionData.stdout);
-      
+
       return submissionData.stdout;
     } catch (error) {
       setError("Something went wrong. Please try again");
@@ -87,18 +88,17 @@ export function Home() {
   }
 
   return (
-    <div className="mx-2 my-2 flex flex-col rounded-md border border-gray-600 bg-[#171a18] p-4 text-gray-200 sm:mx-auto sm:w-4/5">
-      <h1 className="text-2xl">Enter details</h1>
-      <form className="mt-8 flex flex-grow flex-col justify-between">
-        <div className="flex-grow gap-10 space-y-2 md:flex">
-          <div className="flex flex-col gap-4">
+    <div className="mx-2 my-2 flex flex-col rounded-md text-gray-200 sm:mx-auto sm:w-4/5">
+      <form className="flex flex-grow flex-col justify-between">
+        <div className="flex-grow gap-1 space-y-2 sm:space-y-0 md:flex">
+          <div className="flex flex-col gap-4 rounded-md border border-[#393d3a] bg-[#171a18] p-4">
             <div className="flex flex-col">
               <label htmlFor="username" className="text-lg">
                 Username
               </label>
               <input
                 id="username"
-                className="text-md w-full rounded-md border border-gray-500 bg-[#272a28]  px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
+                className="text-md w-full rounded-md border border-gray-700 bg-[#272a28]  px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -110,7 +110,7 @@ export function Home() {
               </label>
               <select
                 id="language"
-                className="rounded-md border border-gray-500 bg-[#272a28] outline-none focus:ring-2 focus:ring-[#3d7f9c]"
+                className="rounded-md border border-gray-700 bg-[#272a28] outline-none focus:ring-2 focus:ring-[#3d7f9c]"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
@@ -128,27 +128,66 @@ export function Home() {
               </label>
               <textarea
                 id="stdin"
-                className="text-md h-36 rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
+                className="text-md h-36 rounded-md border border-gray-700 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c] sm:w-96"
                 placeholder="Input"
                 value={stdInput}
                 onChange={(e) => setStdInput(e.target.value)}
               />
             </div>
+            {error && (
+              <div className="text-md my-2 flex w-fit items-center gap-2 rounded-md px-3 py-1 text-red-500">
+                <div>
+                  <MdError />
+                </div>
+                <div> {error}</div>
+              </div>
+            )}
+            {success && (
+              <div className="text-md my-2 flex w-fit items-center gap-2 rounded-md px-3 py-1 text-green-500">
+                <div>
+                  <MdError />
+                </div>
+                <div> {success}</div>
+              </div>
+            )}
+            <div className="mt-auto flex space-x-[1px]">
+              <button
+                onClick={handleSubmit}
+                className={`${
+                  loading ? "cursor-not-allowed " : ""
+                }sm:my-0 my-4 rounded-l-sm bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
+                disabled={loading || executing}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+              <button
+                onClick={executeCodeFunction}
+                className={`${
+                  loading ? "cursor-not-allowed " : ""
+                }sm:my-0 my-4 rounded-r-sm  bg-[#3f4240]  px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-[#626462]`}
+                disabled={executing || loading}
+              >
+                <div className="flex items-center gap-1">
+                  <span>{executing ? "Executing..." : "Run"}</span>
+                  <FaPlay size={14} />
+                </div>
+              </button>
+            </div>
           </div>
-          <div className="w-full">
-            <div className="flex w-full flex-col">
+          <div className="w-full flex gap-2 flex-col rounded-md border border-[#393d3a] bg-[#171a18] p-4">
+            <div className="flex flex-grow w-full flex-col">
               <label htmlFor="code" className="text-lg">
                 Code
               </label>
               <textarea
                 id="code"
-                className="text-md h-96 flex-grow rounded-md border border-gray-500 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
+                className="text-md h-96 flex-grow rounded-md border border-gray-700 bg-[#272a28] px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#3d7f9c]"
                 placeholder="Input"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
             </div>
-            <div className="mt-2 rounded-md border border-gray-500 p-2">
+            <div className="rounded-md mt-auto border border-gray-700 p-2">
               <label
                 htmlFor="code"
                 className="text-md font-semibold leading-[0.7rem] text-gray-200"
@@ -167,39 +206,6 @@ export function Home() {
                 ))}
             </div>
           </div>
-        </div>
-        {error && (
-          <div className="text-md my-2 w-fit rounded-md bg-red-100 px-3 py-1 text-red-600">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="text-md my-2 w-fit rounded-md bg-green-200 px-3 py-1 text-green-800">
-            {success}
-          </div>
-        )}
-        <div className="flex space-x-[1px]">
-          <button
-            onClick={handleSubmit}
-            className={`${
-              loading ? "cursor-not-allowed " : ""
-            }sm:my-0 my-4 rounded-l-sm bg-green-800 px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-green-500`}
-            disabled={loading || executing}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
-          <button
-            onClick={executeCodeFunction}
-            className={`${
-              loading ? "cursor-not-allowed " : ""
-            }sm:my-0 my-4 rounded-r-sm  bg-[#3f4240]  px-4 py-1 text-lg text-white transition-all duration-300 hover:bg-[#626462]`}
-            disabled={executing || loading}
-          >
-            <div className="flex items-center gap-1">
-              <span>{executing ? "Executing..." : "Run"}</span>
-              <FaPlay size={14} />
-            </div>
-          </button>
         </div>
       </form>
     </div>
