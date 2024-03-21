@@ -31,13 +31,18 @@ export function Dashboard() {
       {selected && (
         <CodePopup setSelected={setSelected} selectedCode={selectedCode} />
       )}
-      <div className="relative mt-10 h-[500px] overflow-x-auto sm:rounded-lg">
+
+      <h1 className="mt-8 px-2 py-2 text-gray-300 sm:mx-auto sm:w-[90%] sm:text-2xl">
+        Submissions
+      </h1>
+
+      <div className="relative h-[500px] overflow-x-auto px-2 sm:mx-auto sm:w-[90%] sm:rounded-lg">
         <table
           className={`${
             selected ? "blur-[2px]" : ""
-          } relative mx-auto max-w-5xl border border-gray-900 text-left text-sm text-gray-500 rtl:text-right`}
+          } relative block h-full overflow-x-scroll border-gray-900 text-left text-sm text-gray-500 rtl:text-right`}
         >
-          <thead className="sticky inset-x-0 top-0 bg-[#272a28] text-xs uppercase text-gray-200">
+          <thead className="sticky inset-x-0 top-0 bg-[#171a18] text-xs uppercase text-gray-200">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Username
