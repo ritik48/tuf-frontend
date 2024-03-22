@@ -35,8 +35,8 @@ export function Home() {
     e.preventDefault();
     const code = editorRef.current?.getValue();
 
-    if ([code, stdInput].some((v) => !v)) {
-      setError("Code and Input are required.");
+    if (!code) {
+      setError("Code is required.");
       return;
     }
     try {
@@ -49,9 +49,15 @@ export function Home() {
       const submissionData = await executeCode(code, stdInput, language);
 
       setOutputMessage(submissionData.message);
-      setOutput(submissionData.stdout);
+      if (submissionData.errorMessage) {
+        setOutput(submissionData.errorMessage);
+      } else {
+        setOutput(submissionData.stdout);
+      }
 
-      return submissionData.stdout;
+      return submissionData.stdout
+        ? submissionData.stdout
+        : submissionData.errorMessage;
     } catch (error) {
       setError("Something went wrong. Please try again");
     } finally {
@@ -63,7 +69,7 @@ export function Home() {
     e.preventDefault();
     const code = editorRef.current?.getValue();
 
-    if ([username, language, code, stdInput].some((v) => !v)) {
+    if ([username, language, code].some((v) => !v)) {
       setError("Every field is required.");
       return;
     }
